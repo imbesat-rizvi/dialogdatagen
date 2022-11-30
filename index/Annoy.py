@@ -32,6 +32,22 @@ class Annoy:
             dtype="float32",
         )
 
+    @classmethod
+    def load(cls, path):
+        r"""Load the AnnoyIndex from the provided path. The provided
+        path should be of the AnnoyIndex and not the helper object."""
+
+        path = Path(path)
+        helper_path = path.parent / (path.stem + "_helper" + path.suffix)
+        helper = joblib.load(helper_path)
+
+        obj = cls(feature_dim=helper["feature_dim"], metric=helper["metric"])
+        obj.n_trees = helper["n_trees"]
+        obj.index.load(str(path))
+        obj.n_items = obj.index.get_n_items()
+
+        return obj
+
     def add_vectors(self, vectors):
         r"""add vectors to ANN"""
         for v in tqdm(vectors):
@@ -58,23 +74,6 @@ class Annoy:
             n_trees=self.n_trees,
         )
         joblib.dump(helper, helper_path)
-
-    def load(self, path):
-        r"""Load the AnnoyIndex from the provided path. The provided
-        path should be of the AnnoyIndex and not the helper object."""
-
-        path = Path(path)
-        helper_path = path.parent / (path.stem + "_helper" + path.suffix)
-        helper = joblib.load(helper_path)
-
-        self.feature_dim = helper["feature_dim"]
-        self.metric = helper["metric"]
-        self.n_trees = helper["n_trees"]
-        self.index = AnnoyIndex(f=self.feature_dim, metric=self.metric)
-        self.index.load(str(path))
-        self.n_items = self.index.get_n_items()
-
-        return self
 
     def get_knn(
         self,
