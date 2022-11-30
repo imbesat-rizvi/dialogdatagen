@@ -1,0 +1,13 @@
+# python==3.10
+datasets==2.7.1
+transformers==4.24.0
+sentence-transformers==2.2.2
+torch==1.12.1
+spacy==3.4.3
+nltk==3.7
+tqdm==4.64.1
+joblib==1.2.0
+annoy==1.17.1
+# faiss-gpu==1.7.2
+faiss-cpu==1.7.3
+black==22.10.0
